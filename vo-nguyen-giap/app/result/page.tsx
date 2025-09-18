@@ -1,13 +1,13 @@
 "use client";
 import React, { useRef } from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
 import Navbar from '../components/Navbar';
 
-interface ResultPageProps {
-  score: number;
-  total: number;
-  answers: number[];
-  questions: any[];
+interface Question {
+  question: string;
+  options: string[];
+  answer: number;
 }
 
 export default function ResultPage() {
@@ -17,7 +17,7 @@ export default function ResultPage() {
     total: number;
     percentage: number;
     answers: number[];
-    questions: any[];
+    questions: Question[];
   } | null>(null);
   
   const successSoundRef = useRef<HTMLAudioElement | null>(null);
@@ -80,6 +80,16 @@ export default function ResultPage() {
       <Navbar />
       
       <div className="pt-20 px-4 pb-8">
+        {/* Thank you message */}
+          <div className="text-center mt-8 pb-8">
+            <Image 
+              src="/thanks.jpg" 
+              alt="Cảm ơn" 
+              width={800}
+              height={600}
+              className="mx-auto mb-4 w-[350px] h-auto"
+            />
+          </div>
         <div className="max-w-4xl mx-auto">
           {/* Header */}
           <div className="text-center mb-6 md:mb-8">
@@ -125,18 +135,6 @@ export default function ResultPage() {
                 <span className="text-xl md:text-2xl font-bold text-gray-700 mt-1">{percentage.toFixed(1)}%</span>
               </div>
             </div>
-          </div>
-
-          {/* Thank you message */}
-          <div className="text-center mt-8 pb-8">
-            <img 
-              src="/thanks.jpg" 
-              alt="Cảm ơn" 
-              className="mx-auto mb-4 w-full h-auto"
-            />
-            <p className="text-lg md:text-xl text-black font-bold">
-              CẢM ƠN THẦY VÀ CÁC BẠN ĐÃ LẮNG NGHE
-            </p>
           </div>
         </div>
       </div>

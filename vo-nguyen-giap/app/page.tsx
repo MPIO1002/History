@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import Image from 'next/image'
 import Navbar from './components/Navbar'
 
 export default function Home() {
@@ -20,10 +21,12 @@ export default function Home() {
           <div className="animate-slide-up opacity-10 sm:opacity-15">
             <div className="flex flex-col">
               {column1Images.map((num, index) => (
-                <img
+                <Image
                   key={`col1-${index}`}
                   src={`/image-${num}.png`}
                   alt={`Column 1 ${num}`}
+                  width={300}
+                  height={200}
                   className="w-full h-32 sm:h-48 md:h-64 object-cover mb-3 sm:mb-4 md:mb-5 rounded-md md:rounded-lg"
                 />
               ))}
@@ -36,10 +39,12 @@ export default function Home() {
           <div className="animate-slide-down opacity-20 sm:opacity-30">
             <div className="flex flex-col">
               {column2Images.map((num, index) => (
-                <img
+                <Image
                   key={`col2-${index}`}
                   src={`/image-${num}.png`}
                   alt={`Column 2 ${num}`}
+                  width={300}
+                  height={200}
                   className="w-full h-32 sm:h-48 md:h-64 object-cover mb-3 sm:mb-4 md:mb-5 rounded-md md:rounded-lg"
                 />
               ))}
@@ -68,10 +73,12 @@ export default function Home() {
           <div className="animate-slide-down opacity-55">
             <div className="flex flex-col">
               {column4Images.map((num, index) => (
-                <img
+                <Image
                   key={`col4-${index}`}
                   src={`/image-${num}.png`}
                   alt={`Column 4 ${num}`}
+                  width={300}
+                  height={200}
                   className="w-full h-64 object-cover mb-5 rounded-lg"
                 />
               ))}
