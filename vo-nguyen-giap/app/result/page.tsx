@@ -79,9 +79,9 @@ export default function ResultPage() {
     <div className="min-h-screen bg-gray-50">
       <Navbar />
       
-      <div className="pt-20 px-4 pb-8">
+      <div className="pt-15 px-4 pb-4">
         {/* Thank you message */}
-          <div className="text-center mt-8 pb-8">
+          <div className="text-center">
             <Image 
               src="/thanks.jpg" 
               alt="Cảm ơn" 

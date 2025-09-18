@@ -89,10 +89,10 @@ export default function Home() {
 
       {/* Floating content - Enhanced responsive positioning */}
       <div className="absolute inset-x-3 top-1/2 transform -translate-y-1/2 sm:inset-x-6 md:left-8 md:right-auto md:w-2/5 lg:w-1/3 z-20 p-4 sm:p-6 md:p-8 sm:bg-opacity-94 md:bg-opacity-90 rounded-xl sm:rounded-2xl md:rounded-none">
-        <h2 className="text-lg sm:text-2xl md:text-3xl lg:text-4xl font-bold text-gray-800 mb-3 sm:mb-4 md:mb-6 text-center md:text-left leading-tight sm:leading-snug">
-          <span className="block sm:inline">Chào mừng các bạn đến với</span>
-          <span className="block">phần câu hỏi trắc nghiệm về</span>
-          <span className="block">đại tướng Võ Nguyên Giáp</span>
+        <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-3xl font-bold text-gray-800 mb-3 sm:mb-4 md:mb-6 text-center md:text-left leading-tight sm:leading-snug">
+          <span className="block">Chào mừng các bạn đến với</span>
+          <span className="block"> phần câu hỏi trắc nghiệm về</span>
+          <span className="block"> đại tướng Võ Nguyên Giáp</span>
         </h2>
         <div className="text-center md:text-left">
           <Link 
