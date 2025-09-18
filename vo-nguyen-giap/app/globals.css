@@ -15,3 +15,29 @@ a, a:visited {
 a:hover, a:focus {
   color: #fb923c;
 }
+
+@keyframes slide-up {
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(-50%);
+  }
+}
+
+@keyframes slide-down {
+  0% {
+    transform: translateY(-50%);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+.animate-slide-up {
+  animation: slide-up 20s linear infinite;
+}
+
+.animate-slide-down {
+  animation: slide-down 20s linear infinite;
+}

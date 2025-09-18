@@ -1,217 +1,101 @@
-"use client";
-import React, { useState, useEffect } from "react";
+import Link from 'next/link'
+import Navbar from './components/Navbar'
 
-type Question = {
-  question: string;
-  options: string[];
-  answer: number;
-};
-
-
-export default function Page() {
-  const [questions, setQuestions] = useState<Question[]>([]);
-  const [selected, setSelected] = useState<number[]>([]);
-  const [showResult, setShowResult] = useState(false);
-  const [loading, setLoading] = useState(true);
-  const [current, setCurrent] = useState(0);
-  const [checked, setChecked] = useState(false);
-
-  // Khôi phục trạng thái từ localStorage
-  useEffect(() => {
-    const saved = localStorage.getItem("quizState");
-    if (saved) {
-      const state = JSON.parse(saved);
-      setSelected(state.selected || []);
-      setShowResult(state.showResult || false);
-      setCurrent(state.current || 0);
-      setChecked(state.checked || false);
-    }
-  }, []);
-
-  useEffect(() => {
-    fetch("/api/questions")
-      .then((res) => res.json())
-      .then((data) => {
-        setQuestions(data);
-        // Nếu chưa có selected thì khởi tạo
-        setSelected((prev) => prev.length === data.length ? prev : Array(data.length).fill(null));
-        setLoading(false);
-      });
-  }, []);
-
-
-  const handleSelect = (oIdx: number) => {
-    if (showResult || checked) return;
-    const newSelected = [...selected];
-    newSelected[current] = oIdx;
-    setSelected(newSelected);
-    saveState({ selected: newSelected, showResult, current, checked });
-  };
-
-  const handleCheck = () => {
-    setChecked(true);
-    saveState({ selected, showResult, current, checked: true });
-  };
-
-  const handleNext = () => {
-    if (current < questions.length - 1) {
-      setCurrent(current + 1);
-      setChecked(false);
-      saveState({ selected, showResult, current: current + 1, checked: false });
-    } else {
-      setShowResult(true);
-      saveState({ selected, showResult: true, current, checked });
-    }
-  };
-
-  // Lưu trạng thái vào localStorage
-  function saveState(state: { selected: number[]; showResult: boolean; current: number; checked: boolean }) {
-    localStorage.setItem("quizState", JSON.stringify(state));
-  }
-
-  const correctCount = questions.length > 0
-    ? selected.filter((ans, idx) => ans === questions[idx].answer).length
-    : 0;
-
-  // Progress bar
-  const progress = questions.length > 0 ? ((current / questions.length) * 100) : 0;
+export default function Home() {
+  // Image arrays for 4 background columns
+  const column1Images = ['1', '2', '3', '4', '5', '6', '1', '2', '3', '4', '5', '6']
+  const column2Images = ['7', '8', '9', '10', '11', '12', '7', '8', '9', '10', '11', '12']
+  const column3Images = ['1', '3', '5', '7', '9', '11', '1', '3', '5', '7', '9', '11']
+  const column4Images = ['2', '4', '6', '8', '10', '12', '2', '4', '6', '8', '10', '12']
 
   return (
-    <main className="min-h-screen bg-white flex items-center justify-center px-2 relative">
-      {/* Navbar fixed top */}
-      <nav className="fixed top-0 left-0 w-full bg-white z-10 shadow-sm">
-        <div className="max-w-2xl mx-auto flex items-center gap-4 py-4 px-2">
-          <img src="/logo.png" alt="Logo" className="h-10" />
-          <span className="font-bold text-xl baloo">LỊCH SỬ ĐẢNG CỘNG SẢN VIỆT NAM</span>
-          <div className="flex-1 flex items-center ml-4">
-            <div className="w-full h-3 rounded-full relative" style={{ background: '#eaf7ea' }}>
-              <div
-                className="h-3 rounded-full transition-all"
-                style={{ width: `${progress}%`, background: '#6ad47b' }}
-              ></div>
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 overflow-hidden relative">
+      {/* Navbar */}
+      <Navbar />
+      
+      {/* Background with responsive columns */}
+      <div className="flex h-screen absolute inset-0 gap-2 sm:gap-3 md:gap-5">
+        {/* Column 1 - Opacity 10% (90% fade) */}
+        <div className="w-1/2 sm:w-1/3 md:w-1/4 overflow-hidden relative">
+          <div className="animate-slide-up opacity-10 sm:opacity-15">
+            <div className="flex flex-col">
+              {column1Images.map((num, index) => (
+                <img
+                  key={`col1-${index}`}
+                  src={`/image-${num}.png`}
+                  alt={`Column 1 ${num}`}
+                  className="w-full h-32 sm:h-48 md:h-64 object-cover mb-3 sm:mb-4 md:mb-5 rounded-md md:rounded-lg"
+                />
+              ))}
             </div>
           </div>
         </div>
-      </nav>
-      {/* Main content center */}
-      <div className="max-w-2xl w-full flex flex-col items-center justify-center" style={{ minHeight: '70vh' }}>
-        {loading ? (
-          <div className="text-center py-10 text-gray-500">Đang tải câu hỏi...</div>
-        ) : questions.length > 0 ? (
-          <div className="space-y-8 w-full">
-            <div className="rounded-xl shadow p-4" style={{ background: '#f7f8fa' }}>
-              <div className="mb-3 baloo font-bold text-center" style={{ fontSize: '1.25rem', lineHeight: '1.75rem' }}>
-                Câu {current + 1} : {questions[current].question}
-              </div>
-              <div className="grid gap-3">
-                {questions[current].options.map((opt, oIdx) => {
-                  const isChecked = selected[current] === oIdx;
-                  let optionClass =
-                    "flex items-center px-4 py-3 rounded-lg border font-semibold cursor-pointer transition select-none";
-                  if (isChecked && !checked) optionClass += " border-blue-500";
-                  else optionClass += " border-gray-300";
-                  // Màu nền đáp án
-                  let bgColor = '#fff';
-                  if (isChecked && !checked) bgColor = '#eaf1ff';
-                  if (checked) {
-                    if (oIdx === questions[current].answer) {
-                      optionClass += " border-green-500";
-                      bgColor = '#eaf7ea';
-                    } else if (isChecked && oIdx !== questions[current].answer) {
-                      optionClass += " border-red-500";
-                      bgColor = '#ffeaea';
-                    }
-                  }
-                  return (
-                    <div
-                      key={oIdx}
-                      className={optionClass}
-                      onClick={() => handleSelect(oIdx)}
-                      style={{ userSelect: "none", background: bgColor }}
-                    >
-                      <span
-                        className="w-8 h-8 flex items-center justify-center mr-3 text-base font-bold rounded-full border"
-                        style={{
-                          borderColor: isChecked && !checked ? '#3b82f6' : '#e5e7eb',
-                          background: isChecked && !checked ? '#eaf1ff' : '#fff',
-                          color: '#374151',
-                        }}
-                      >{String.fromCharCode(65 + oIdx)}</span>
-                      <span className="flex-1 baloo" style={{ fontSize: '1.25rem', lineHeight: '1.75rem', fontWeight: 'normal' }}>{opt}</span>
-                    </div>
-                  );
-                })}
-              </div>
+
+        {/* Column 2 - Opacity 25% */}
+        <div className="w-1/2 sm:w-1/3 md:w-1/4 overflow-hidden relative">
+          <div className="animate-slide-down opacity-20 sm:opacity-30">
+            <div className="flex flex-col">
+              {column2Images.map((num, index) => (
+                <img
+                  key={`col2-${index}`}
+                  src={`/image-${num}.png`}
+                  alt={`Column 2 ${num}`}
+                  className="w-full h-32 sm:h-48 md:h-64 object-cover mb-3 sm:mb-4 md:mb-5 rounded-md md:rounded-lg"
+                />
+              ))}
             </div>
-            {showResult && (
-              <div className="mt-6 text-center text-lg font-bold text-green-700">
-                Bạn trả lời đúng {correctCount} / {questions.length} câu
-              </div>
-            )}
           </div>
-        ) : null}
+        </div>
+
+        {/* Column 3 - Hidden on mobile, visible sm+ */}
+        <div className="hidden sm:block sm:w-1/3 md:w-1/4 overflow-hidden relative">
+          <div className="animate-slide-up opacity-35 md:opacity-40">
+            <div className="flex flex-col">
+              {column3Images.map((num, index) => (
+                <img
+                  key={`col3-${index}`}
+                  src={`/image-${num}.png`}
+                  alt={`Column 3 ${num}`}
+                  className="w-full h-48 md:h-64 object-cover mb-4 md:mb-5 rounded-md md:rounded-lg"
+                />
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Column 4 - Hidden on mobile and sm, visible md+ */}
+        <div className="hidden md:block md:w-1/4 overflow-hidden relative">
+          <div className="animate-slide-down opacity-55">
+            <div className="flex flex-col">
+              {column4Images.map((num, index) => (
+                <img
+                  key={`col4-${index}`}
+                  src={`/image-${num}.png`}
+                  alt={`Column 4 ${num}`}
+                  className="w-full h-64 object-cover mb-5 rounded-lg"
+                />
+              ))}
+            </div>
+          </div>
+        </div>
       </div>
-      {/* Footer fixed bottom */}
-      <footer className="fixed bottom-0 left-0 w-full bg-white z-10 shadow-inner" style={{ height: '100px' }}>
-        <div className="max-w-2xl mx-auto flex justify-between items-center h-full px-4">
-          {!checked ? (
-            <>
-              <button
-                type="button"
-                className="bg-gray-100 px-6 py-2 rounded-lg font-semibold text-gray-700 hover:bg-gray-200 cursor-pointer"
-                onClick={() => {
-                  setSelected(Array(questions.length).fill(null));
-                  setShowResult(false);
-                  setCurrent(0);
-                  setChecked(false);
-                  saveState({ selected: Array(questions.length).fill(null), showResult: false, current: 0, checked: false });
-                }}
-              >
-                Trở về
-              </button>
-              <button
-                type="button"
-                className="bg-red-600 px-6 py-2 rounded-lg font-semibold text-white hover:bg-red-700 cursor-pointer"
-                onClick={handleCheck}
-                disabled={selected[current] === null}
-              >
-                Kiểm tra
-              </button>
-            </>
-          ) : (
-            <>
-              <div className="flex items-center gap-2">
-                {selected[current] === questions[current].answer ? (
-                  <>
-                    <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
-                      <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                      </svg>
-                    </div>
-                    <span className="text-green-600 font-bold text-lg baloo">Đúng rồi, bạn giỏi quá!</span>
-                  </>
-                ) : (
-                  <>
-                    <div className="w-8 h-8 bg-red-500 rounded-full flex items-center justify-center">
-                      <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
-                      </svg>
-                    </div>
-                    <span className="text-red-600 font-bold text-lg baloo">Tiếc quá, bạn sai rồi!</span>
-                  </>
-                )}
-              </div>
-              <button
-                type="button"
-                className="bg-red-600 px-6 py-2 rounded-lg font-semibold text-white hover:bg-red-700 cursor-pointer"
-                onClick={handleNext}
-              >
-                {current < questions.length - 1 ? "Tiếp tục" : "Xem kết quả"}
-              </button>
-            </>
-          )}
+
+      {/* Floating content - Enhanced responsive positioning */}
+      <div className="absolute inset-x-3 top-1/2 transform -translate-y-1/2 sm:inset-x-6 md:left-8 md:right-auto md:w-2/5 lg:w-1/3 z-20 p-4 sm:p-6 md:p-8 sm:bg-opacity-94 md:bg-opacity-90 rounded-xl sm:rounded-2xl md:rounded-none">
+        <h2 className="text-lg sm:text-2xl md:text-3xl lg:text-4xl font-bold text-gray-800 mb-3 sm:mb-4 md:mb-6 text-center md:text-left leading-tight sm:leading-snug">
+          <span className="block sm:inline">Chào mừng các bạn đến với</span>
+          <span className="block">phần câu hỏi trắc nghiệm về</span>
+          <span className="block">đại tướng Võ Nguyên Giáp</span>
+        </h2>
+        <div className="text-center md:text-left">
+          <Link 
+            href="/quiz"
+            className="bg-red-600 text-white py-3 sm:py-4 px-6 sm:px-8 md:px-5 rounded-lg text-base sm:text-lg md:text-xl font-semibold hover:bg-red-700 transition-all duration-200 shadow-lg hover:shadow-xl inline-block w-auto text-center transform hover:scale-105"
+          >
+            <span className="text-base sm:text-lg md:text-lg text-white">LÀM BÀI</span>
+          </Link>
         </div>
-      </footer>
-    </main>
-  );
+      </div>
+    </div> 
+  )
 }
